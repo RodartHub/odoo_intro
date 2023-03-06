@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 from dateutil.relativedelta import relativedelta
 
 class PropertyEstate(models.Model):
@@ -19,7 +19,7 @@ class PropertyEstate(models.Model):
         default = 2)
     living_area = fields.Integer(string='Living area (m2)')
     facades = fields.Integer(string='Facades')
-    garage = fields.Boolean(string='Garages')
+    garage = fields.Boolean(string='Garage')
     garden = fields.Boolean(string='Garden')
     garden_area = fields.Integer(string='Garden Area (m2)')
     garden_orientation = fields.Selection(
@@ -31,6 +31,15 @@ class PropertyEstate(models.Model):
         ('West', 'West')
         ]
     )
+
+    @api.onchange('garden')
+    def _onchange_garden_fields(self):
+        if self.garden:
+            self.garden_area = 10
+            self.garden_orientation = 'North'
+        else:
+            self.garden_area = 0
+            self.garden_orientation = ''
 
     last_seen = fields.Datetime(
         'Last Seen', 
@@ -76,6 +85,26 @@ class PropertyEstate(models.Model):
         'estate_property_offer',
         'property_id', 
         string = 'offers')
+    
+    total_area = fields.Integer(
+        string='Total area (m2)',
+        compute='_total_area')
+
+    @api.depends('living_area', 'garden_area')
+    def _total_area(self):
+        for area in self:
+            area.total_area = area.living_area + area.garden_area
+
+    best_price = fields.Float(
+        string = 'Best price',
+        compute ='_best_price')
+    
+    @api.depends('offer_ids.price')
+    def _best_price(self):
+        for price in self:
+            if price.best_price != 0:
+                price.best_price = max(self.mapped('offer_ids.price'))
+        
 
 
 
