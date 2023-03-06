@@ -43,7 +43,7 @@ class PropertyOffer(models.Model):
             
     
     def _inverse_deadline_calculated(self):
-        for value in self:
+        for value in self:  
             date = value.date_deadline - fields.Date.today()
             value.validity = int(date.days)
             
