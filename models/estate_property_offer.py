@@ -6,6 +6,7 @@ class PropertyOffer(models.Model):
     _description= 'Ofertas de compra para las propiedades, hechas por clientes interesados'
 
     price = fields.Float(string='Price')
+
     state = fields.Selection(
         string = 'Status',
         copy = False,
@@ -35,6 +36,23 @@ class PropertyOffer(models.Model):
         inverse = '_inverse_deadline_calculated',
         store = True
         )
+    
+    _sql_constraints= [
+        ('check_price', 
+        'CHECK(price > 0)', 
+        'The offer price must have values more than zero'
+        )
+    ]
+
+    def property_offer_accepted(self):
+        for record in self:
+            record.state = 'Accepted'
+            return True
+
+    def property_offer_refused(self):
+        for record in self:
+            record.state = 'Refused'
+            return True
 
     @api.depends('validity')
     def _deadline_calculated(self):
@@ -47,5 +65,6 @@ class PropertyOffer(models.Model):
             date = value.date_deadline - fields.Date.today()
             value.validity = int(date.days)
             
+
             
-            
+

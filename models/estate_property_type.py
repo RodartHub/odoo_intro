@@ -5,3 +5,11 @@ class PropertyType(models.Model):
     _description= 'Tipos de propiedades'
 
     name = fields.Char(required=True)
+
+    _sql_constraints= [
+        ('unique_name', 
+        'UNIQUE(name)', 
+        'You can only have one type with same name'
+        )
+    ]
+

@@ -46,6 +46,10 @@
         <field name="model">estate_property</field>
         <field name="arch" type="xml">
             <form string="Form properties">
+                <header>
+                    <button name="property_status_sold" type="object" string="SOLD"/>
+                    <button name="property_status_cancel" type="object" string="CANCEL"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -58,7 +62,7 @@
                             <field name="property_tag_ids" widget="many2many_tags"/>
                         </group>
                         <group>
-                            <field name = "postcode"/>
+                            <field name = "state"/>
                         </group>
                         <group>
                             <field name = "expected_price"/>
@@ -111,7 +115,7 @@
                                     <field name = "garden_orientation"/>
                                 </group>
                                 <group>
-                                    <field name = "state"/>
+                                    <field name = "postcode"/>
                                 </group>
                                 <group>
                                     <field name = "active"/>
@@ -136,14 +140,15 @@
                                     <tree string="Offers">
                                         <field name = "price"/>
                                         <field name = "partner_id"/>
-                                        <field name = "state"/>
                                         <field name = "validity"/>
                                         <field name = "date_deadline"/>
+                                        <button name="property_offer_accepted" string="Accepted" type="object" icon="fa-check"/>
+                                        <button name="property_offer_refused" string="Refused" type="object" icon="fa-times"/>
+                                        <field name = "state"/>
                                     </tree>
                                 </field>
                             </page>
-                        </notebook>
-            
+                        </notebook>            
                     </group>
                 </sheet>
             </form>

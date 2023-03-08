@@ -6,4 +6,9 @@ class PropertyTag(models.Model):
 
     name = fields.Char(required=True)
 
-    
+    _sql_constraints= [
+        ('unique_name', 
+        'UNIQUE(name)', 
+        'You can only have one tag with same name'
+        )
+    ]
