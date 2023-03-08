@@ -3,9 +3,12 @@ from odoo import models, fields
 class PropertyTag(models.Model):
     _name = 'estate_property_tag'
     _description= 'Etiquetas para las propiedades'
+    _order = 'name desc'
 
     name = fields.Char(required=True)
-
+    
+    color = fields.Integer(string='Color index')
+    
     _sql_constraints= [
         ('unique_name', 
         'UNIQUE(name)', 

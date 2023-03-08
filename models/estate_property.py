@@ -6,8 +6,10 @@ from dateutil.relativedelta import relativedelta
 class PropertyEstate(models.Model):
     _name = 'estate_property'
     _description= 'Descripcion minima de este modelo.'
+    _order = 'id desc'
 
     name = fields.Char(
+        string = 'Title',
         default='Unknown',
         required=True)
     
@@ -59,6 +61,7 @@ class PropertyEstate(models.Model):
     state = fields.Selection(
         default = 'New',
         string='Status',
+        required = True,
         selection=[
         ('New', 'New'), 
         ('Offer received', 'Offer received'), 
@@ -170,9 +173,14 @@ class PropertyEstate(models.Model):
     @api.constrains('selling_price','expected_price')
     def _compare_prices(self):
         for price in self:
-            if not float_is_zero(price.selling_price, precision_digits=2):
-                if float_compare(price.selling_price, (price.expected_price*0.9), precision_digits=2) < 0:
-                    raise ValidationError(('No puedes aceptar esta oferta'))
+            if (
+                not float_is_zero(price.selling_price, precision_rounding=0.01)
+                and float_compare(price.selling_price, price.expected_price * 0.9, precision_rounding=0.01) < 0
+            ):
+                raise ValidationError(
+                    "The selling price must be at least 90 porc of the expected price! "
+                    + "You must reduce the expected price if you want to accept this offer."
+                )
 
         
 
