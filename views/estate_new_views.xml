@@ -28,7 +28,6 @@
                 </search>
 
                 <separator/>
-
                 <filter string="Available" name="status" domain="
                 ['|', ('state', '=', 'New'), ('state', '=', 'Offer received')]"/>
 
@@ -55,7 +54,7 @@
                         <button name="property_status_cancel" type="object" string="CANCEL" states="new,offer_received,offer_accepted"/>
                     </div>
                     <div>
-                        <field name="state" widget="statusbar"/>
+                        <!-- <field name="state" widget="statusbar"/> -->
                     </div>
                 </header>
                 <sheet>
@@ -69,9 +68,9 @@
                         <group>
                             <field name="property_type_id" options="{'no_create': True, 'no_edit': True}"/>
                         </group>
-                        <!-- <group>
+                        <group>
                             <field name = "state"/>
-                        </group> -->
+                        </group>
                         
                         <group>
                             <field name = "expected_price"/>
@@ -141,15 +140,15 @@
                                 </group>
                             </page>
                             <page string="Offer">
-                                <field  name="offer_ids" attrs="{'readonly': [('state', 'in', ('Offer_accepted', 'Sold', 'Canceled'))]}">
-                                    <tree string="Offers" editable="bottom" >
+                                <field  name="offer_ids" attrs="{'readonly': [('state', 'in', ('Offer accepted', 'Sold', 'Canceled'))]}">
+                                    <tree string="Offers" editable="bottom" decoration-success="state == 'Accepted'" decoration-danger="state == 'Refused'">
                                         <field name = "price"/>
                                         <field name = "partner_id"/>
                                         <field name = "validity"/>
                                         <field name = "date_deadline"/>
                                         <button name="property_offer_accepted" title="Accepted" type="object" icon="fa-check" attrs="{'invisible': [('state', '!=', False)]}"/>
                                         <button name="property_offer_refused" title="Refused" type="object" icon="fa-times" attrs="{'invisible': [('state', '!=', False)]}"/>
-                                        <field name = "state"/>
+                                        <field name = "state" invisible="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -165,15 +164,17 @@
         <field name="name">estate_property_tree</field>
         <field name="model">estate_property</field>
         <field name="arch" type ="xml">
-            <tree string="Properties">
+            <tree string="Properties" decoration-success="state in ('offer_received', 'offer_accepted')" decoration-muted="state == 'sold'" decoration-bf="state == 'offer_accepted'">
                 <field name = "name"/>
                 <field name = "last_seen"/>
                 <field name = "postcode"/>
+                <field name = "property_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 <field name = "bedrooms"/>
                 <field name = "living_area"/>
                 <field name = "expected_price"/>
                 <field name = "selling_price"/>
-                <field name = "date_availability"/>
+                <field name = "date_availability" optional="hide"/>
+                <field name = "state" invisible="1"/>
             </tree>
         </field>
     </record>

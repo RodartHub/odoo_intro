@@ -22,7 +22,7 @@
         <field name="name">estate_property_tags_tree</field>
         <field name="model">estate_property_tag</field>
         <field name="arch" type ="xml">
-            <tree string="Properties Tags">
+            <tree string="Properties Tags" editable="bottom">
                 <field name = "name"/>
             </tree>
         </field>

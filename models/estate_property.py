@@ -55,7 +55,8 @@ class PropertyEstate(models.Model):
 
     last_seen = fields.Datetime(
         'Last Seen', 
-        default = lambda self: fields.Datetime.now(), readonly=True
+        default = lambda self: fields.Datetime.now(), 
+        readonly=True
         )
     
     state = fields.Selection(
@@ -63,11 +64,11 @@ class PropertyEstate(models.Model):
         string='Status',
         required = True,
         selection=[
-        ('New', 'New'), 
-        ('Offer received', 'Offer received'), 
-        ('Offer Accepted', 'Offer Accepted'), 
-        ('Sold', 'Sold'), 
-        ('Canceled', 'Canceled')
+        ('new', 'New'), 
+        ('offer_received', 'Offer received'), 
+        ('offer_accepted', 'Offer Accepted'), 
+        ('sold', 'Sold'), 
+        ('canceled', 'Canceled')
         ]
     )
 
@@ -130,18 +131,18 @@ class PropertyEstate(models.Model):
 
     def property_status_sold(self):
         for record in self:
-            if record.state == 'Canceled':
+            if record.state == 'canceled':
                 raise UserError(('Canceled properties cannot be sold'))
             else:
-                record.state = 'Sold'
+                record.state = 'sold'
                 return True
     
     def property_status_cancel(self):
         for record in self:
-            if record.state == 'Sold':
+            if record.state == 'sold':
                 raise UserError(('Sold properties cannot be canceled'))
             else:
-                record.state = 'Canceled'
+                record.state = 'canceled'
                 return True
             
     @api.depends('living_area', 'garden_area')

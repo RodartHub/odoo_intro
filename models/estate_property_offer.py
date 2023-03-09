@@ -12,8 +12,8 @@ class PropertyOffer(models.Model):
         string = 'Status',
         copy = False,
         selection = [
-        ('Accepted', 'Accepted'),
-        ('Refused', 'Refused')
+        ('accepted', 'Accepted'),
+        ('refused', 'Refused')
         ]
     )
 
