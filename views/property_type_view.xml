@@ -8,6 +8,11 @@
         <field name="arch" type="xml">
             <form string="Form properties types">
                 <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>            
+                    </group>
                     <notebook>
                         <page string="Properties">
                             <field name="property_ids">

@@ -5,6 +5,12 @@ class PropertyOffer(models.Model):
     _name = 'estate_property_offer'
     _description= 'Ofertas de compra para las propiedades, hechas por clientes interesados'
     _order = 'price desc'
+    _sql_constraints= [
+        ('check_price', 
+        'CHECK(price > 0)', 
+        'The offer price must have values more than zero'
+        )
+    ]
 
     price = fields.Float(string='Price')
 
@@ -38,12 +44,7 @@ class PropertyOffer(models.Model):
         store = True
         )
     
-    _sql_constraints= [
-        ('check_price', 
-        'CHECK(price > 0)', 
-        'The offer price must have values more than zero'
-        )
-    ]
+    
 
     def property_offer_accepted(self):
         for record in self:

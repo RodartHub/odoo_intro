@@ -7,6 +7,16 @@ class PropertyEstate(models.Model):
     _name = 'estate_property'
     _description= 'Descripcion minima de este modelo.'
     _order = 'id desc'
+    _sql_constraints= [
+        ('check_expected_price', 
+        'CHECK(expected_price > 0)', 
+        'The expected price must have values more than zero'
+        ),
+        ('check_selling_price', 
+        'CHECK(selling_price >= 0)', 
+        'The selling price must have only positives values'
+        ),
+    ]
 
     name = fields.Char(
         string = 'Title',
@@ -65,7 +75,7 @@ class PropertyEstate(models.Model):
         required = True,
         selection=[
         ('new', 'New'), 
-        ('offer_received', 'Offer received'), 
+        ('offer_received', 'Offer Received'), 
         ('offer_accepted', 'Offer Accepted'), 
         ('sold', 'Sold'), 
         ('canceled', 'Canceled')
@@ -108,17 +118,6 @@ class PropertyEstate(models.Model):
         string = 'Best price',
         compute ='_best_price'
         )
-    
-    _sql_constraints= [
-        ('check_expected_price', 
-        'CHECK(expected_price > 0)', 
-        'The expected price must have values more than zero'
-        ),
-        ('check_selling_price', 
-        'CHECK(selling_price >= 0)', 
-        'The selling price must have only positives values'
-        ),
-    ]
 
     @api.onchange('garden')
     def _onchange_garden_fields(self):
@@ -167,7 +166,7 @@ class PropertyEstate(models.Model):
         self.buyer_id = ''
 
         for state in self.offer_ids:
-            if state.state == 'Accepted':
+            if state.state == 'accepted':
                 self.selling_price = state.price
                 self.buyer_id = state.partner_id
                 

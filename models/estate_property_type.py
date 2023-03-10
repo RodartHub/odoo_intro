@@ -14,7 +14,7 @@ class PropertyType(models.Model):
     )
 
     sequence = fields.Integer('Sequence')
-
+    
     _sql_constraints= [
         ('unique_name', 
         'UNIQUE(name)', 

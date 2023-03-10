@@ -17,23 +17,19 @@
                     <field name = "selling_price"/>
                     <field name = "bedrooms"/>
                     <field name = "living_area"/>
-                    <field name = "living_area"/>
+                    <field name = "living_area" filter_domain="[('living_area', '>=', self)]"/>
                     <field name = "facades"/>
                     <field name = "garage"/>
                     <field name = "garden"/>
                     <field name = "garden_area"/>
                     <field name = "garden_orientation"/>
                     <field name = "state"/>
-                    <field name = "active"/>                     
+                    <field name = "active"/>
+                    <filter string="Available" name="status" domain="['|', ('state', '=', 'new'), ('state', '=', 'offer_received')]"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Postcode" name="postcode" context="{'group_by':'postcode'}"/>
+                    </group>   
                 </search>
-
-                <separator/>
-                <filter string="Available" name="status" domain="
-                ['|', ('state', '=', 'New'), ('state', '=', 'Offer received')]"/>
-
-                <group expand="1" string="Group By">
-                    <filter string="Postcode" name="postcode" context="{'group_by':'postcode'}"/>
-                </group>
             </field>
         </record>
 
@@ -47,14 +43,9 @@
             <form string="Form properties">
                 <header>
                     <div>
-                    <button name="property_status_sold" type="object" string="SOLD"/>
-                        <button name="property_status_cancel" type="object" string="CANCEL"/>
                         <button name="property_status_sold" type="object" string="SOLD" states="new,offer_received"/>
                         <button name="property_status_sold" type="object" string="SOLD" states="offer_accepted" class="oe_highlight"/>
                         <button name="property_status_cancel" type="object" string="CANCEL" states="new,offer_received,offer_accepted"/>
-                    </div>
-                    <div>
-                        <!-- <field name="state" widget="statusbar"/> -->
                     </div>
                 </header>
                 <sheet>
@@ -140,8 +131,8 @@
                                 </group>
                             </page>
                             <page string="Offer">
-                                <field  name="offer_ids" attrs="{'readonly': [('state', 'in', ('Offer accepted', 'Sold', 'Canceled'))]}">
-                                    <tree string="Offers" editable="bottom" decoration-success="state == 'Accepted'" decoration-danger="state == 'Refused'">
+                                <field  name="offer_ids" attrs="{'readonly': [('state', 'in', ('offer_accepted', 'sold', 'canceled'))]}">
+                                    <tree string="Offers" editable="bottom" decoration-success="state == 'accepted'" decoration-danger="state == 'refused'">
                                         <field name = "price"/>
                                         <field name = "partner_id"/>
                                         <field name = "validity"/>
@@ -180,3 +171,4 @@
     </record>
 
 </odoo>
+
