@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_compare
 from dateutil.relativedelta import relativedelta
 
 class PropertyOffer(models.Model):
@@ -44,17 +46,36 @@ class PropertyOffer(models.Model):
         store = True
         )
     
+    property_type_id = fields.Many2one(
+        'estate_property_type',
+        related='property_id.property_type_id',
+        string = 'Property type',
+        store = True
+    )
     
 
     def property_offer_accepted(self):
-        for record in self:
-            record.state = 'Accepted'
-            return True
+        if "accepted" in self.mapped("property_id.offer_ids.state"):
+            raise UserError("An offer as already been accepted.")
+        self.write(
+            {
+                "state": "accepted",
+            }
+        )
+        return self.mapped("property_id").write(
+            {
+                "state": "offer_accepted",
+                "selling_price": self.price,
+                "buyer_id": self.partner_id.id,
+            }
+        )
 
     def property_offer_refused(self):
-        for record in self:
-            record.state = 'Refused'
-            return True
+        return self.write(
+            {
+                "state": "refused",
+            }
+        )
 
     @api.depends('validity')
     def _deadline_calculated(self):
@@ -66,7 +87,20 @@ class PropertyOffer(models.Model):
         for value in self:  
             date = value.date_deadline - fields.Date.today()
             value.validity = int(date.days)
-            
+    
+    @api.model
+    def create(self, vals):
+        if vals.get("property_id") and vals.get("price"):
+            prop_price = self.env["estate_property"].browse(vals["property_id"])
+
+            if prop_price.offer_ids:
+                max_offer = max(prop_price.mapped("offer_ids.price"))
+                if float_compare(vals["price"], max_offer, precision_rounding=0.01) <= 0:
+                    raise UserError("The offer must be higher than %.2f" % max_offer)
+            prop_price.state = "offer_received"
+        return super().create(vals)
+
+
 
             
 

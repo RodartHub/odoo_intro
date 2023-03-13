@@ -94,7 +94,9 @@ class PropertyEstate(models.Model):
 
     buyer_id = fields.Many2one(
         'res.partner',
-        string='Buyer')
+        string='Buyer',
+        readonly=True,
+        copy=False)
     
     salesman_id = fields.Many2one(
         'res.users',
@@ -108,7 +110,7 @@ class PropertyEstate(models.Model):
     offer_ids = fields.One2many(
         'estate_property_offer',
         'property_id', 
-        string = 'offers')
+        string = 'O ffers')
     
     total_area = fields.Integer(
         string='Total area (m2)',
@@ -128,21 +130,16 @@ class PropertyEstate(models.Model):
             self.garden_area = 0
             self.garden_orientation = ''
 
+            
     def property_status_sold(self):
-        for record in self:
-            if record.state == 'canceled':
-                raise UserError(('Canceled properties cannot be sold'))
-            else:
-                record.state = 'sold'
-                return True
-    
+        if "canceled" in self.mapped("state"):
+            raise UserError("Canceled properties cannot be sold.")
+        return self.write({"state": "sold"})
+
     def property_status_cancel(self):
-        for record in self:
-            if record.state == 'sold':
-                raise UserError(('Sold properties cannot be canceled'))
-            else:
-                record.state = 'canceled'
-                return True
+        if "sold" in self.mapped("state"):
+            raise UserError("Sold properties cannot be canceled.")
+        return self.write({"state": "canceled"})
             
     @api.depends('living_area', 'garden_area')
     def _total_area(self):
@@ -182,8 +179,11 @@ class PropertyEstate(models.Model):
                     + "You must reduce the expected price if you want to accept this offer."
                 )
 
-        
-
+    @api.ondelete(at_uninstall = False) 
+    def unlink(self):
+        if not set(self.mapped("state")) <= {"new", "canceled"}:
+            raise UserError("Only new and canceled properties can be deleted.")
+        return super().unlink()
 
 
 
