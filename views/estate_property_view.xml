@@ -2,9 +2,10 @@
 
 <odoo>
 
+
 <!-- Search -->
 
-<record id="estate_properties_view_search" model="ir.ui.view">
+    <record id="estate_properties_view_search" model="ir.ui.view">
             <field name="name">estate_properties_search</field>
             <field name="model">estate_property</field>
             <field name="arch" type="xml">
@@ -192,5 +193,21 @@
         </field>
     </record>
 
-</odoo>
+    <!-- Estate action -->
 
+    <record id="test_model_action" model="ir.actions.act_window">
+        <field name="name">Register a new property</field>
+        <field name="res_model">estate_property</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="context">{'search_default_available': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a property advertisement
+            </p>
+            <p>
+                Create real estate properties and follow the selling process.
+            </p>
+        </field>
+    </record>
+
+</odoo>

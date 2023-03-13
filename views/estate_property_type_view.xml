@@ -46,4 +46,10 @@
         </field>
     </record>
 
+    <record id="test_model_type_action" model="ir.actions.act_window">
+        <field name="name">Property types</field>
+        <field name="res_model">estate_property_type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
 </odoo>

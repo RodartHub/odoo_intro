@@ -1,6 +1,9 @@
 from odoo import models, fields
 
 class PropertyTag(models.Model):
+
+    # ---------------------------------------- Private Attributes ---------------------------------
+
     _name = 'estate_property_tag'
     _description= 'Etiquetas para las propiedades'
     _order = 'name desc'
@@ -11,6 +14,10 @@ class PropertyTag(models.Model):
         )
     ]
 
+    # --------------------------------------- Fields Declaration ----------------------------------
+
+    # Basic
+    
     name = fields.Char(required=True)
     
     color = fields.Integer(string='Color index')

@@ -1,6 +1,9 @@
 from odoo import models, fields
 
 class PropertyType(models.Model):
+
+    # ---------------------------------------- Private Attributes ---------------------------------
+
     _name = 'estate_property_type'
     _description= 'Tipos de propiedades'
     _order = 'name desc'
@@ -11,7 +14,15 @@ class PropertyType(models.Model):
         )
     ]
 
+    # --------------------------------------- Fields Declaration ----------------------------------
+
+    # Basic
+
     name = fields.Char(required=True)
+    
+    sequence = fields.Integer('Sequence')
+
+    # Relational
 
     property_ids = fields.One2many(
         'estate_property',
@@ -19,7 +30,7 @@ class PropertyType(models.Model):
         string = 'Properties'
     )
 
-    sequence = fields.Integer('Sequence')
+    # Computed
 
     offer_ids = fields.Many2many(
         'estate_property_offer',
@@ -32,7 +43,8 @@ class PropertyType(models.Model):
         compute ='_compute_offer'
     )
 
-            
+    # ---------------------------------------- Compute methods ------------------------------------    
+
     def _compute_offer(self):
 
         data = self.env["estate_property_offer"].read_group(
@@ -46,7 +58,8 @@ class PropertyType(models.Model):
             prop_type.offer_count = mapped_count.get(prop_type.id, 0)
             prop_type.offer_ids = mapped_ids.get(prop_type.id, [])
 
-
+    # ---------------------------------------- Action Methods -------------------------------------
+    
     def action_view_offers(self):
         res = self.env.ref("estate.estate_property_offer_action").read()[0]
         res["domain"] = [("id", "in", self.offer_ids.ids)]
